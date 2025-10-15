@@ -1,6 +1,10 @@
 # Image de base légère avec Python
 FROM python:3.10-slim
 
+LABEL org.opencontainers.image.title="mini-ci-cd-flask" \
+      org.opencontainers.image.source="https://github.com/AmielDylan/mini-ci-cd-flask.git" \
+      org.opencontainers.image.version="0.1.0"
+
 # Bonnes pratiques Python
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

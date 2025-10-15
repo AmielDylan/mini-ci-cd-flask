@@ -1,0 +1,17 @@
+services:
+  web:
+    image: amieldy/mini-ci-cd-flask:0.1.0
+
+    ports:
+      - "5001:5000"   # hôte:conteneur
+
+    healthcheck:       # test de l'état Healthy/Unhealthy du conteneur
+      test: ["CMD", "python", "-c", "import socket,sys; s=socket.socket(); s.settimeout(2); s.connect(('127.0.0.1',5000)); s.close()"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+    environment: 
+      - PYTHONUNBUFFERED=1
+
+    pull_policy: always # l'image est toujours pull du hub
