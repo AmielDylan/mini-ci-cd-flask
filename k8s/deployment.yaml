@@ -1,0 +1,45 @@
+# version de l'API utilisé pour acceder au service en charge des deploiment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: mini-ci-cd
+
+# le nombre de copie de mon pod (créera un ReplicaSet de x pods)
+spec:
+  replicas: 3
+
+  # Comment identifier les pods (ici par le label)
+  selector:
+    matchLabels:
+      app: flask-app
+
+  template:
+    metadata:
+      labels: # Le label des pods à creer
+        app: flask-app
+
+    spec:
+      containers:
+        - name: flask
+          image: amieldy/mini-ci-cd-flask:latest # nom de l'image à tirer depuis le DockerHub
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000 # le port sur lequel s'addresser au container au sein du pod
+          
+          # test si le pod est pret à recevoir du trafic
+          readinessProbe:
+            httpGet: { path: "/", port: 5000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          
+          # test si le pod est vivant
+          livenessProbe:
+            httpGet: { path: "/", port: 5000 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+          # valeur min et max ou placer un pod sur un noeud
+          resources:
+                requests: { cpu: "100m", memory: "128Mi" }
+                limits:   { cpu: "300m", memory: "256Mi" }
